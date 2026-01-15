@@ -1,7 +1,7 @@
 
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import { Baby, Heart, Star } from 'lucide-react';
+import { Baby, Heart, Star, Sparkles, Moon, Sun, Cloud, BookOpen, Users, Gift, Calendar, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Index = () => {
@@ -48,23 +48,36 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-lavender">
       <Navigation />
 
+      {/* Decorative floating elements */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <Heart className="absolute top-20 left-10 h-6 w-6 text-pink-200 animate-float opacity-60" style={{ animationDelay: '0s' }} />
+        <Star className="absolute top-40 right-20 h-5 w-5 text-pink-200 animate-float opacity-50" style={{ animationDelay: '1s' }} />
+        <Sparkles className="absolute top-60 left-1/4 h-4 w-4 text-lavender animate-pulse-gentle opacity-40" style={{ animationDelay: '2s' }} />
+        <Moon className="absolute bottom-40 right-10 h-5 w-5 text-blue-200 animate-float opacity-50" style={{ animationDelay: '0.5s' }} />
+        <Cloud className="absolute bottom-60 left-20 h-8 w-8 text-blue-100 animate-float opacity-40" style={{ animationDelay: '1.5s' }} />
+      </div>
+
       {/* Hero Section */}
-      <section className="section-padding py-20">
+      <section className="section-padding py-20 relative z-10">
         <div className="text-center max-w-4xl mx-auto">
           <div className="flex justify-center mb-6">
             <div className="relative">
-              <Baby className="h-16 w-16 text-pink-400 animate-float" />
-              <Heart className="h-6 w-6 text-pink-500 absolute -top-2 -right-2 animate-pulse-gentle" />
-              <Star className="h-4 w-4 text-pink-300 absolute -bottom-1 -left-2 animate-pulse-gentle" style={{ animationDelay: '1s' }} />
+              <div className="absolute -inset-4 bg-gradient-to-r from-pink-200 via-lavender to-mint rounded-full blur-xl opacity-60 animate-pulse-gentle"></div>
+              <Baby className="relative h-20 w-20 text-pink-400 animate-float" />
+              <Heart className="h-7 w-7 text-pink-500 absolute -top-2 -right-3 animate-pulse-gentle" />
+              <Star className="h-5 w-5 text-yellow-400 absolute -bottom-1 -left-3 animate-pulse-gentle" style={{ animationDelay: '1s' }} />
+              <Sparkles className="h-4 w-4 text-pink-300 absolute top-0 -left-5 animate-pulse-gentle" style={{ animationDelay: '0.5s' }} />
             </div>
           </div>
           
-          <h1 className="text-5xl md:text-6xl font-pacifico text-pink-600 mb-4">
+          <h1 className="text-5xl md:text-6xl font-pacifico text-pink-600 mb-4 drop-shadow-sm">
             Welcome to SnuggleNest
           </h1>
           
-          <p className="text-xl md:text-2xl text-pink-500 mb-6 font-light">
-            Where Little Hearts Grow & Mamas Glow ✨
+          <p className="text-xl md:text-2xl text-pink-500 mb-6 font-light flex items-center justify-center gap-2">
+            <Sparkles className="h-5 w-5 animate-pulse-gentle" />
+            Where Little Hearts Grow & Mamas Glow
+            <Sparkles className="h-5 w-5 animate-pulse-gentle" />
           </p>
           
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
@@ -73,14 +86,40 @@ const Index = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/blog" className="gentle-button">
-              <Heart className="h-5 w-5 inline mr-2" />
+            <Link to="/blog" className="gentle-button group">
+              <Heart className="h-5 w-5 inline mr-2 group-hover:scale-110 transition-transform" />
               Explore Baby Tips
             </Link>
-            <Link to="/community" className="bg-mint hover:bg-green-200 text-green-800 px-6 py-3 rounded-full font-medium transition-all duration-300 shadow-sm hover:shadow-md">
-              <Baby className="h-5 w-5 inline mr-2" />
+            <Link to="/community" className="bg-mint hover:bg-green-200 text-green-800 px-6 py-3 rounded-full font-medium transition-all duration-300 shadow-sm hover:shadow-md group">
+              <Users className="h-5 w-5 inline mr-2 group-hover:scale-110 transition-transform" />
               Join Our Community
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Quick Stats Section */}
+      <section className="section-padding py-8 relative z-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+          <div className="baby-card text-center hover:scale-105 transition-transform duration-300">
+            <BookOpen className="h-8 w-8 text-pink-400 mx-auto mb-2 animate-float" />
+            <div className="text-2xl font-bold text-pink-600">150+</div>
+            <div className="text-sm text-gray-500">Baby Tips</div>
+          </div>
+          <div className="baby-card text-center hover:scale-105 transition-transform duration-300">
+            <Gift className="h-8 w-8 text-green-400 mx-auto mb-2 animate-float" style={{ animationDelay: '0.5s' }} />
+            <div className="text-2xl font-bold text-pink-600">50+</div>
+            <div className="text-sm text-gray-500">Free Resources</div>
+          </div>
+          <div className="baby-card text-center hover:scale-105 transition-transform duration-300">
+            <Users className="h-8 w-8 text-purple-400 mx-auto mb-2 animate-float" style={{ animationDelay: '1s' }} />
+            <div className="text-2xl font-bold text-pink-600">2,500+</div>
+            <div className="text-sm text-gray-500">Happy Mamas</div>
+          </div>
+          <div className="baby-card text-center hover:scale-105 transition-transform duration-300">
+            <MessageCircle className="h-8 w-8 text-blue-400 mx-auto mb-2 animate-float" style={{ animationDelay: '1.5s' }} />
+            <div className="text-2xl font-bold text-pink-600">24/7</div>
+            <div className="text-sm text-gray-500">Community Support</div>
           </div>
         </div>
       </section>

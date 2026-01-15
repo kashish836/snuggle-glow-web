@@ -1,7 +1,7 @@
 
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import { Baby, Heart, Star } from 'lucide-react';
+import { Baby, Heart, Star, Download, FileText, Calendar, ClipboardList, Sparkles, Gift, CheckCircle, Moon } from 'lucide-react';
 
 const Resources = () => {
   const resources = [
@@ -84,7 +84,12 @@ const Resources = () => {
       <section className="section-padding py-16">
         <div className="text-center max-w-4xl mx-auto">
           <div className="flex justify-center mb-6">
-            <Star className="h-12 w-12 text-pink-400 animate-pulse-gentle" />
+            <div className="relative">
+              <div className="absolute -inset-3 bg-gradient-to-r from-mint to-lavender rounded-full blur-lg opacity-60 animate-pulse-gentle"></div>
+              <Gift className="relative h-14 w-14 text-pink-400 animate-float" />
+              <Sparkles className="h-5 w-5 text-yellow-400 absolute -top-1 -right-2 animate-sparkle" />
+              <Heart className="h-4 w-4 text-pink-500 absolute -bottom-1 -left-2 animate-pulse-gentle" />
+            </div>
           </div>
           
           <h1 className="text-4xl md:text-5xl font-pacifico text-pink-600 mb-4">
@@ -102,9 +107,12 @@ const Resources = () => {
       <section className="section-padding mb-12">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {categories.map((category, index) => (
-            <div key={index} className="baby-card text-center hover:scale-105 transition-transform duration-300 cursor-pointer">
-              <div className={`w-12 h-12 rounded-full ${category.color} flex items-center justify-center mx-auto mb-4`}>
-                <Heart className="h-6 w-6" />
+            <div key={index} className="baby-card text-center hover:scale-105 transition-transform duration-300 cursor-pointer group">
+              <div className={`w-14 h-14 rounded-full ${category.color} flex items-center justify-center mx-auto mb-4 group-hover:animate-wiggle`}>
+                {index === 0 && <Baby className="h-7 w-7" />}
+                {index === 1 && <Moon className="h-7 w-7" />}
+                {index === 2 && <Calendar className="h-7 w-7" />}
+                {index === 3 && <ClipboardList className="h-7 w-7" />}
               </div>
               
               <h3 className="text-lg font-semibold text-gray-800 mb-2">
@@ -115,7 +123,8 @@ const Resources = () => {
                 {category.description}
               </p>
               
-              <span className="text-xs text-pink-600 font-medium bg-pink-100 px-3 py-1 rounded-full">
+              <span className="text-xs text-pink-600 font-medium bg-pink-100 px-3 py-1 rounded-full inline-flex items-center gap-1">
+                <FileText className="h-3 w-3" />
                 {category.count} resources
               </span>
             </div>
@@ -163,8 +172,8 @@ const Resources = () => {
                 </div>
               </div>
               
-              <button className="w-full gentle-button">
-                <Heart className="h-4 w-4 inline mr-2" />
+              <button className="w-full gentle-button group">
+                <Download className="h-4 w-4 inline mr-2 group-hover:animate-bounce-gentle" />
                 Download Free
               </button>
             </div>

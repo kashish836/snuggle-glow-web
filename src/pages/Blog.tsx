@@ -1,7 +1,7 @@
 
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import { Baby, Heart, Star } from 'lucide-react';
+import { Baby, Heart, Star, Moon, Sun, BookOpen, Sparkles, Clock, ArrowRight, Coffee } from 'lucide-react';
 
 const Blog = () => {
   const blogPosts = [
@@ -60,7 +60,12 @@ const Blog = () => {
       <section className="section-padding py-16">
         <div className="text-center max-w-4xl mx-auto">
           <div className="flex justify-center mb-6">
-            <Heart className="h-12 w-12 text-pink-400 animate-pulse-gentle" />
+            <div className="relative">
+              <div className="absolute -inset-3 bg-gradient-to-r from-pink-200 to-lavender rounded-full blur-lg opacity-60 animate-pulse-gentle"></div>
+              <BookOpen className="relative h-14 w-14 text-pink-400 animate-float" />
+              <Heart className="h-5 w-5 text-pink-500 absolute -top-1 -right-2 animate-pulse-gentle" />
+              <Sparkles className="h-4 w-4 text-yellow-400 absolute -bottom-1 -left-2 animate-sparkle" />
+            </div>
           </div>
           
           <h1 className="text-4xl md:text-5xl font-pacifico text-pink-600 mb-4">
@@ -142,7 +147,10 @@ const Blog = () => {
                 <span className="text-xs font-semibold text-pink-600 bg-pink-100 px-3 py-1 rounded-full">
                   {post.category}
                 </span>
-                <Star className="h-4 w-4 text-pink-300 group-hover:text-pink-500 transition-colors" />
+                <div className="flex items-center gap-1">
+                  <Clock className="h-3 w-3 text-gray-400" />
+                  <span className="text-xs text-gray-500">{post.readTime}</span>
+                </div>
               </div>
               
               <h3 className="text-xl font-semibold text-gray-800 mb-3 group-hover:text-pink-600 transition-colors">
@@ -154,14 +162,17 @@ const Blog = () => {
               </p>
               
               <div className="flex items-center justify-between text-xs text-gray-500">
-                <span>{post.readTime}</span>
-                <span>{post.date}</span>
+                <span className="flex items-center gap-1">
+                  <Coffee className="h-3 w-3" />
+                  {post.date}
+                </span>
+                <Star className="h-4 w-4 text-pink-300 group-hover:text-pink-500 group-hover:animate-sparkle transition-colors" />
               </div>
               
               <div className="mt-4 pt-4 border-t border-pink-100">
-                <span className="text-pink-500 hover:text-pink-600 font-medium inline-flex items-center text-sm">
+                <span className="text-pink-500 hover:text-pink-600 font-medium inline-flex items-center text-sm group-hover:gap-2 transition-all">
                   Read More 
-                  <Heart className="h-3 w-3 ml-1" />
+                  <ArrowRight className="h-4 w-4 ml-1" />
                 </span>
               </div>
             </div>

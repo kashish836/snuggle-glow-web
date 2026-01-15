@@ -1,7 +1,7 @@
 
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import { Baby, Heart, Star } from 'lucide-react';
+import { Baby, Heart, Star, Users, MessageCircle, Sparkles, Coffee, HandHeart, Crown, Award } from 'lucide-react';
 
 const Community = () => {
   const discussions = [
@@ -74,8 +74,11 @@ const Community = () => {
         <div className="text-center max-w-4xl mx-auto">
           <div className="flex justify-center mb-6">
             <div className="relative">
-              <Heart className="h-12 w-12 text-pink-400 animate-pulse-gentle" />
-              <Star className="h-4 w-4 text-pink-300 absolute -top-1 -right-1 animate-pulse-gentle" style={{ animationDelay: '1s' }} />
+              <div className="absolute -inset-3 bg-gradient-to-r from-pink-200 to-lavender rounded-full blur-lg opacity-60 animate-pulse-gentle"></div>
+              <Users className="relative h-14 w-14 text-pink-400 animate-float" />
+              <Heart className="h-5 w-5 text-pink-500 absolute -top-1 -right-2 animate-pulse-gentle" />
+              <Star className="h-4 w-4 text-yellow-400 absolute -bottom-1 -left-2 animate-sparkle" style={{ animationDelay: '1s' }} />
+              <Sparkles className="h-4 w-4 text-pink-300 absolute top-0 left-[-20px] animate-pulse-gentle" style={{ animationDelay: '0.5s' }} />
             </div>
           </div>
           
@@ -93,19 +96,23 @@ const Community = () => {
       {/* Community Stats */}
       <section className="section-padding mb-12">
         <div className="grid md:grid-cols-4 gap-6">
-          <div className="baby-card text-center">
+          <div className="baby-card text-center hover:scale-105 transition-transform duration-300">
+            <Users className="h-8 w-8 text-pink-400 mx-auto mb-2 animate-float" />
             <div className="text-3xl font-bold text-pink-600 mb-2">2,847</div>
             <div className="text-gray-600">Loving Mamas</div>
           </div>
-          <div className="baby-card text-center">
+          <div className="baby-card text-center hover:scale-105 transition-transform duration-300">
+            <MessageCircle className="h-8 w-8 text-purple-400 mx-auto mb-2 animate-float" style={{ animationDelay: '0.5s' }} />
             <div className="text-3xl font-bold text-pink-600 mb-2">1,247</div>
             <div className="text-gray-600">Discussions</div>
           </div>
-          <div className="baby-card text-center">
+          <div className="baby-card text-center hover:scale-105 transition-transform duration-300">
+            <Coffee className="h-8 w-8 text-green-400 mx-auto mb-2 animate-float" style={{ animationDelay: '1s' }} />
             <div className="text-3xl font-bold text-pink-600 mb-2">156</div>
             <div className="text-gray-600">Online Now</div>
           </div>
-          <div className="baby-card text-center">
+          <div className="baby-card text-center hover:scale-105 transition-transform duration-300">
+            <HandHeart className="h-8 w-8 text-blue-400 mx-auto mb-2 animate-float" style={{ animationDelay: '1.5s' }} />
             <div className="text-3xl font-bold text-pink-600 mb-2">24/7</div>
             <div className="text-gray-600">Support Available</div>
           </div>
@@ -165,8 +172,8 @@ const Community = () => {
           <div className="lg:col-span-3">
             {/* New Discussion Button */}
             <div className="mb-6">
-              <button className="gentle-button">
-                <Heart className="h-4 w-4 inline mr-2" />
+              <button className="gentle-button group">
+                <Sparkles className="h-4 w-4 inline mr-2 group-hover:animate-sparkle" />
                 Start New Discussion
               </button>
             </div>
