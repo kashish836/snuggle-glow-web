@@ -1,7 +1,7 @@
 
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import { Baby, Heart, Star } from 'lucide-react';
+import { Baby, Heart, Star, Mail, MessageCircle, Send, Sparkles, Gift, BookOpen } from 'lucide-react';
 
 const Contact = () => {
   return (
@@ -13,8 +13,10 @@ const Contact = () => {
         <div className="text-center max-w-4xl mx-auto">
           <div className="flex justify-center mb-6">
             <div className="relative">
-              <Baby className="h-12 w-12 text-pink-400 animate-float" />
-              <Heart className="h-4 w-4 text-pink-300 absolute -top-1 -right-1 animate-pulse-gentle" />
+              <div className="absolute -inset-3 bg-gradient-to-r from-pink-200 to-mint rounded-full blur-lg opacity-60 animate-pulse-gentle"></div>
+              <Mail className="relative h-14 w-14 text-pink-400 animate-float" />
+              <Heart className="h-5 w-5 text-pink-500 absolute -top-1 -right-2 animate-pulse-gentle" />
+              <Sparkles className="h-4 w-4 text-yellow-400 absolute -bottom-1 -left-2 animate-sparkle" />
             </div>
           </div>
           
@@ -106,8 +108,8 @@ const Contact = () => {
                 </label>
               </div>
 
-              <button type="submit" className="w-full gentle-button text-center">
-                <Heart className="h-4 w-4 inline mr-2" />
+              <button type="submit" className="w-full gentle-button text-center group">
+                <Send className="h-4 w-4 inline mr-2 group-hover:translate-x-1 transition-transform" />
                 Send Message with Love
               </button>
             </form>
@@ -120,8 +122,10 @@ const Contact = () => {
               <h3 className="text-xl font-semibold text-gray-800 mb-4">Other Ways to Reach Us</h3>
               
               <div className="space-y-4">
-                <div className="flex items-start space-x-3">
-                  <Heart className="h-5 w-5 text-pink-500 mt-0.5" />
+                <div className="flex items-start space-x-3 group">
+                  <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center group-hover:animate-wiggle">
+                    <Mail className="h-5 w-5 text-pink-500" />
+                  </div>
                   <div>
                     <p className="font-medium text-gray-800">Email Support</p>
                     <p className="text-gray-600 text-sm">hello@snugglenest.com</p>
@@ -129,8 +133,10 @@ const Contact = () => {
                   </div>
                 </div>
 
-                <div className="flex items-start space-x-3">
-                  <Star className="h-5 w-5 text-pink-500 mt-0.5" />
+                <div className="flex items-start space-x-3 group">
+                  <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center group-hover:animate-wiggle">
+                    <MessageCircle className="h-5 w-5 text-purple-500" />
+                  </div>
                   <div>
                     <p className="font-medium text-gray-800">Community Forum</p>
                     <p className="text-gray-600 text-sm">Connect with other mamas 24/7</p>
@@ -138,8 +144,10 @@ const Contact = () => {
                   </div>
                 </div>
 
-                <div className="flex items-start space-x-3">
-                  <Baby className="h-5 w-5 text-pink-500 mt-0.5" />
+                <div className="flex items-start space-x-3 group">
+                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center group-hover:animate-wiggle">
+                    <BookOpen className="h-5 w-5 text-green-500" />
+                  </div>
                   <div>
                     <p className="font-medium text-gray-800">Resource Library</p>
                     <p className="text-gray-600 text-sm">Browse helpful guides and tools</p>
