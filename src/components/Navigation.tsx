@@ -1,11 +1,20 @@
-
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Baby, Menu, X, Heart } from 'lucide-react';
+import { Baby, Menu, X, Heart, User, Settings, LogOut } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { user, signOut } = useAuth();
 
   const navItems = [
     { name: 'Home', path: '/' },
@@ -16,6 +25,10 @@ const Navigation = () => {
   ];
 
   const isActive = (path: string) => location.pathname === path;
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
 
   return (
     <nav className="bg-white/90 backdrop-blur-sm shadow-sm border-b border-pink-100 sticky top-0 z-50">
@@ -34,7 +47,7 @@ const Navigation = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6">
             {navItems.map((item) => (
               <Link
                 key={item.name}
@@ -51,6 +64,58 @@ const Navigation = () => {
                 )}
               </Link>
             ))}
+
+            {/* Auth Section */}
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="relative rounded-full p-2 hover:bg-pink-50 group"
+                  >
+                    <div className="w-9 h-9 bg-gradient-to-br from-pink-200 to-pink-300 rounded-full flex items-center justify-center group-hover:from-pink-300 group-hover:to-pink-400 transition-all">
+                      <User className="h-5 w-5 text-pink-700" />
+                    </div>
+                    <Heart className="h-2.5 w-2.5 text-pink-500 absolute top-0 right-0 animate-pulse-gentle" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent 
+                  align="end" 
+                  className="w-56 bg-white border border-pink-100 shadow-lg rounded-xl p-2"
+                >
+                  <div className="px-3 py-2 mb-1">
+                    <p className="text-sm font-medium text-gray-800">Welcome, Mama! 💕</p>
+                    <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                  </div>
+                  <DropdownMenuSeparator className="bg-pink-100" />
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/settings"
+                      className="flex items-center gap-2 cursor-pointer rounded-lg px-3 py-2 hover:bg-pink-50 text-gray-700"
+                    >
+                      <Settings className="h-4 w-4 text-pink-500" />
+                      Settings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-pink-100" />
+                  <DropdownMenuItem
+                    onClick={handleSignOut}
+                    className="flex items-center gap-2 cursor-pointer rounded-lg px-3 py-2 hover:bg-pink-50 text-gray-700"
+                  >
+                    <LogOut className="h-4 w-4 text-pink-500" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link
+                to="/auth"
+                className="gentle-button flex items-center gap-2 py-2 px-4 text-sm"
+              >
+                <Heart className="h-4 w-4" />
+                Sign In
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -80,6 +145,39 @@ const Navigation = () => {
                   {item.name}
                 </Link>
               ))}
+              
+              {/* Mobile Auth */}
+              {user ? (
+                <>
+                  <Link
+                    to="/settings"
+                    onClick={() => setIsOpen(false)}
+                    className="px-4 py-2 rounded-lg text-gray-600 hover:bg-pink-50 hover:text-pink-600 flex items-center gap-2"
+                  >
+                    <Settings className="h-4 w-4" />
+                    Settings
+                  </Link>
+                  <button
+                    onClick={() => {
+                      handleSignOut();
+                      setIsOpen(false);
+                    }}
+                    className="px-4 py-2 rounded-lg text-gray-600 hover:bg-pink-50 hover:text-pink-600 flex items-center gap-2 text-left"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <Link
+                  to="/auth"
+                  onClick={() => setIsOpen(false)}
+                  className="mx-4 mt-2 gentle-button flex items-center justify-center gap-2 py-2"
+                >
+                  <Heart className="h-4 w-4" />
+                  Sign In
+                </Link>
+              )}
             </div>
           </div>
         )}
