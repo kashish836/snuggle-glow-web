@@ -1,9 +1,190 @@
+/**
+ * Contact Page with Secure Form Handling
+ * 
+ * SECURITY:
+ * - Rate limiting on form submissions
+ * - Strict input validation with Zod schemas
+ * - XSS prevention through sanitization
+ * - No sensitive data logging
+ */
 
+import { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import { Baby, Heart, Star, Mail, MessageCircle, Send, Sparkles, Gift, BookOpen } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
+import { rateLimiter, RATE_LIMIT_CONFIGS } from '@/lib/rate-limiter';
+import { contactFormSchema, emailSchema, type ContactFormData } from '@/lib/validation';
+import {
+  Baby,
+  Heart,
+  Star,
+  Mail,
+  MessageCircle,
+  Send,
+  Sparkles,
+  Gift,
+  BookOpen,
+  AlertCircle,
+  CheckCircle,
+} from 'lucide-react';
 
 const Contact = () => {
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [rateLimitMessage, setRateLimitMessage] = useState<string | null>(null);
+
+  // Form state
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    topic: 'General Question',
+    message: '',
+    newsletter: false,
+  });
+
+  // Newsletter form state
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterLoading, setNewsletterLoading] = useState(false);
+
+  /**
+   * Handles contact form submission
+   * SECURITY: Validates all inputs and rate limits submissions
+   */
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrors({});
+    setRateLimitMessage(null);
+
+    // Rate limiting check
+    const rateLimit = rateLimiter.check('contact', RATE_LIMIT_CONFIGS.contact);
+    if (!rateLimit.allowed) {
+      setRateLimitMessage(rateLimit.message || 'Too many submissions. Please wait.');
+      toast({
+        variant: 'destructive',
+        title: 'Too Many Submissions',
+        description: rateLimit.message,
+      });
+      return;
+    }
+
+    // Validate form data using Zod schema
+    const validationResult = contactFormSchema.safeParse(formData);
+
+    if (!validationResult.success) {
+      const fieldErrors: Record<string, string> = {};
+      validationResult.error.errors.forEach((err) => {
+        const field = err.path[0] as string;
+        fieldErrors[field] = err.message;
+      });
+      setErrors(fieldErrors);
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Simulate form submission (in production, this would call an edge function)
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      setSubmitted(true);
+      toast({
+        title: 'Message Sent! 💕',
+        description: 'Thank you for reaching out. We\'ll get back to you soon.',
+      });
+
+      // Reset form
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        topic: 'General Question',
+        message: '',
+        newsletter: false,
+      });
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Submission Failed',
+        description: 'Unable to send your message. Please try again.',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
+   * Handles newsletter signup
+   * SECURITY: Rate limited and validated
+   */
+  const handleNewsletterSignup = async () => {
+    // Rate limiting check
+    const rateLimit = rateLimiter.check('newsletter', RATE_LIMIT_CONFIGS.newsletter);
+    if (!rateLimit.allowed) {
+      toast({
+        variant: 'destructive',
+        title: 'Too Many Attempts',
+        description: rateLimit.message,
+      });
+      return;
+    }
+
+    // Validate email
+    const emailResult = emailSchema.safeParse(newsletterEmail);
+    if (!emailResult.success) {
+      toast({
+        variant: 'destructive',
+        title: 'Invalid Email',
+        description: emailResult.error.errors[0].message,
+      });
+      return;
+    }
+
+    setNewsletterLoading(true);
+
+    try {
+      // Simulate newsletter signup
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      toast({
+        title: 'Subscribed! 🎉',
+        description: 'Welcome to our newsletter family.',
+      });
+      setNewsletterEmail('');
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Signup Failed',
+        description: 'Unable to subscribe. Please try again.',
+      });
+    } finally {
+      setNewsletterLoading(false);
+    }
+  };
+
+  const topics = [
+    'General Question',
+    'Resource Request',
+    'Community Support',
+    'Partnership Inquiry',
+    'Technical Issue',
+    'Share My Story',
+  ] as const;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-lavender">
       <Navigation />
@@ -19,13 +200,13 @@ const Contact = () => {
               <Sparkles className="h-4 w-4 text-yellow-400 absolute -bottom-1 -left-2 animate-sparkle" />
             </div>
           </div>
-          
+
           <h1 className="text-4xl md:text-5xl font-pacifico text-pink-600 mb-4">
             Let's Connect
           </h1>
-          
+
           <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            Have a question, story to share, or just want to say hello? We'd love to hear from you. 
+            Have a question, story to share, or just want to say hello? We'd love to hear from you.
             Every message is read with love and care.
           </p>
         </div>
@@ -36,82 +217,168 @@ const Contact = () => {
           {/* Contact Form */}
           <div className="baby-card">
             <h2 className="text-2xl font-semibold text-gray-800 mb-6">Send Us a Message</h2>
-            
-            <form className="space-y-6">
+
+            {/* Rate Limit Warning */}
+            {rateLimitMessage && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2 text-red-700">
+                <AlertCircle className="h-5 w-5 flex-shrink-0" />
+                <p className="text-sm">{rateLimitMessage}</p>
+              </div>
+            )}
+
+            {/* Success Message */}
+            {submitted && (
+              <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-xl flex items-center gap-2 text-green-700">
+                <CheckCircle className="h-5 w-5 flex-shrink-0" />
+                <p className="text-sm">Your message has been sent successfully!</p>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName" className="text-gray-700">
                     First Name *
-                  </label>
-                  <input
+                  </Label>
+                  <Input
+                    id="firstName"
                     type="text"
-                    className="w-full px-4 py-3 border border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 transition-colors"
                     placeholder="Your first name"
+                    value={formData.firstName}
+                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                    maxLength={100}
+                    className={`border-pink-200 focus:border-pink-400 focus:ring-pink-400 rounded-xl ${
+                      errors.firstName ? 'border-red-400' : ''
+                    }`}
                   />
+                  {errors.firstName && (
+                    <p className="text-sm text-red-500 flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      {errors.firstName}
+                    </p>
+                  )}
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="space-y-2">
+                  <Label htmlFor="lastName" className="text-gray-700">
                     Last Name
-                  </label>
-                  <input
+                  </Label>
+                  <Input
+                    id="lastName"
                     type="text"
-                    className="w-full px-4 py-3 border border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 transition-colors"
                     placeholder="Your last name"
+                    value={formData.lastName}
+                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                    maxLength={100}
+                    className="border-pink-200 focus:border-pink-400 focus:ring-pink-400 rounded-xl"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-gray-700">
                   Email Address *
-                </label>
-                <input
+                </Label>
+                <Input
+                  id="email"
                   type="email"
-                  className="w-full px-4 py-3 border border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 transition-colors"
                   placeholder="your@email.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  maxLength={255}
+                  className={`border-pink-200 focus:border-pink-400 focus:ring-pink-400 rounded-xl ${
+                    errors.email ? 'border-red-400' : ''
+                  }`}
                 />
+                {errors.email && (
+                  <p className="text-sm text-red-500 flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    {errors.email}
+                  </p>
+                )}
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="space-y-2">
+                <Label htmlFor="topic" className="text-gray-700">
                   How can we help? *
-                </label>
-                <select className="w-full px-4 py-3 border border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 transition-colors">
-                  <option>General Question</option>
-                  <option>Resource Request</option>
-                  <option>Community Support</option>
-                  <option>Partnership Inquiry</option>
-                  <option>Technical Issue</option>
-                  <option>Share My Story</option>
-                </select>
+                </Label>
+                <Select
+                  value={formData.topic}
+                  onValueChange={(value) => setFormData({ ...formData, topic: value })}
+                >
+                  <SelectTrigger className="border-pink-200 focus:border-pink-400 focus:ring-pink-400 rounded-xl">
+                    <SelectValue placeholder="Select a topic" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border-pink-200 rounded-xl">
+                    {topics.map((topic) => (
+                      <SelectItem key={topic} value={topic} className="focus:bg-pink-50">
+                        {topic}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.topic && (
+                  <p className="text-sm text-red-500 flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    {errors.topic}
+                  </p>
+                )}
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="space-y-2">
+                <Label htmlFor="message" className="text-gray-700">
                   Your Message *
-                </label>
-                <textarea
+                </Label>
+                <Textarea
+                  id="message"
                   rows={6}
-                  className="w-full px-4 py-3 border border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 transition-colors resize-none"
                   placeholder="Share your thoughts, questions, or story with us..."
-                ></textarea>
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  maxLength={5000}
+                  className={`border-pink-200 focus:border-pink-400 focus:ring-pink-400 rounded-xl resize-none ${
+                    errors.message ? 'border-red-400' : ''
+                  }`}
+                />
+                {errors.message && (
+                  <p className="text-sm text-red-500 flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    {errors.message}
+                  </p>
+                )}
+                <p className="text-xs text-gray-500">{formData.message.length}/5000 characters</p>
               </div>
 
               <div className="flex items-start space-x-3">
-                <input
-                  type="checkbox"
+                <Checkbox
                   id="newsletter"
-                  className="mt-1 h-4 w-4 text-pink-600 focus:ring-pink-500 border-pink-300 rounded"
+                  checked={formData.newsletter}
+                  onCheckedChange={(checked) =>
+                    setFormData({ ...formData, newsletter: checked === true })
+                  }
+                  className="mt-1 border-pink-300 data-[state=checked]:bg-pink-500 data-[state=checked]:border-pink-500"
                 />
-                <label htmlFor="newsletter" className="text-sm text-gray-600">
+                <Label htmlFor="newsletter" className="text-sm text-gray-600 cursor-pointer">
                   I'd love to receive gentle tips and updates via the SnuggleNest newsletter
-                </label>
+                </Label>
               </div>
 
-              <button type="submit" className="w-full gentle-button text-center group">
-                <Send className="h-4 w-4 inline mr-2 group-hover:translate-x-1 transition-transform" />
-                Send Message with Love
-              </button>
+              <Button
+                type="submit"
+                disabled={loading || !!rateLimitMessage}
+                className="w-full gentle-button text-center group"
+              >
+                {loading ? (
+                  <span className="flex items-center gap-2 justify-center">
+                    <Heart className="h-4 w-4 animate-pulse" />
+                    Sending...
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2 justify-center">
+                    <Send className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    Send Message with Love
+                  </span>
+                )}
+              </Button>
             </form>
           </div>
 
@@ -120,7 +387,7 @@ const Contact = () => {
             {/* Contact Methods */}
             <div className="baby-card">
               <h3 className="text-xl font-semibold text-gray-800 mb-4">Other Ways to Reach Us</h3>
-              
+
               <div className="space-y-4">
                 <div className="flex items-start space-x-3 group">
                   <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center group-hover:animate-wiggle">
@@ -160,26 +427,37 @@ const Contact = () => {
             {/* FAQ */}
             <div className="baby-card">
               <h3 className="text-xl font-semibold text-gray-800 mb-4">Quick Answers</h3>
-              
+
               <div className="space-y-4">
                 <div>
                   <p className="font-medium text-gray-800 mb-1">How quickly do you respond?</p>
-                  <p className="text-gray-600 text-sm">We aim to respond to all messages within 24 hours, usually much sooner!</p>
+                  <p className="text-gray-600 text-sm">
+                    We aim to respond to all messages within 24 hours, usually much sooner!
+                  </p>
                 </div>
 
                 <div>
                   <p className="font-medium text-gray-800 mb-1">Are all resources really free?</p>
-                  <p className="text-gray-600 text-sm">Yes! Every resource in our library is completely free because every mama deserves support.</p>
+                  <p className="text-gray-600 text-sm">
+                    Yes! Every resource in our library is completely free because every mama deserves
+                    support.
+                  </p>
                 </div>
 
                 <div>
                   <p className="font-medium text-gray-800 mb-1">Can I share my story?</p>
-                  <p className="text-gray-600 text-sm">Absolutely! We love featuring real mama stories to inspire and connect our community.</p>
+                  <p className="text-gray-600 text-sm">
+                    Absolutely! We love featuring real mama stories to inspire and connect our
+                    community.
+                  </p>
                 </div>
 
                 <div>
                   <p className="font-medium text-gray-800 mb-1">How do I join the community?</p>
-                  <p className="text-gray-600 text-sm">Simply visit our Community page and start participating in discussions. No special signup needed!</p>
+                  <p className="text-gray-600 text-sm">
+                    Simply visit our Community page and start participating in discussions. No
+                    special signup needed!
+                  </p>
                 </div>
               </div>
             </div>
@@ -190,18 +468,31 @@ const Contact = () => {
                 <Star className="h-8 w-8 text-pink-500 mx-auto mb-3 animate-pulse-gentle" />
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">Weekly Love Notes</h3>
                 <p className="text-gray-700 text-sm mb-4">
-                  Get gentle tips, heartwarming stories, and community highlights delivered to your inbox.
+                  Get gentle tips, heartwarming stories, and community highlights delivered to your
+                  inbox.
                 </p>
-                
+
                 <div className="flex space-x-2">
-                  <input
+                  <Input
                     type="email"
                     placeholder="Your email address"
-                    className="flex-1 px-4 py-2 border border-pink-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"
+                    value={newsletterEmail}
+                    onChange={(e) => setNewsletterEmail(e.target.value)}
+                    maxLength={255}
+                    className="flex-1 border-pink-200 rounded-full text-sm focus:border-pink-400 focus:ring-pink-400"
                   />
-                  <button className="bg-pink-400 hover:bg-pink-500 text-white px-4 py-2 rounded-full transition-colors">
-                    <Heart className="h-4 w-4" />
-                  </button>
+                  <Button
+                    type="button"
+                    onClick={handleNewsletterSignup}
+                    disabled={newsletterLoading}
+                    className="bg-pink-400 hover:bg-pink-500 text-white px-4 py-2 rounded-full transition-colors"
+                  >
+                    {newsletterLoading ? (
+                      <Heart className="h-4 w-4 animate-pulse" />
+                    ) : (
+                      <Heart className="h-4 w-4" />
+                    )}
+                  </Button>
                 </div>
               </div>
             </div>

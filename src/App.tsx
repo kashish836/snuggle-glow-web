@@ -11,6 +11,7 @@ import Community from "./pages/Community";
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
 import Settings from "./pages/Settings";
+import ProfileEditor from "./pages/ProfileEditor";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/profile/edit" element={<ProfileEditor />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

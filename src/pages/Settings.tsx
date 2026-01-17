@@ -24,6 +24,7 @@ import {
   ChevronRight,
   Sparkles,
   Star,
+  Edit3,
 } from 'lucide-react';
 
 const Settings = () => {
@@ -158,16 +159,28 @@ const Settings = () => {
 
           {/* Profile Section */}
           <div className="baby-card mb-6">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-pink-200 to-pink-300 rounded-full flex items-center justify-center">
-                <User className="h-8 w-8 text-pink-600" />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-pink-200 to-pink-300 rounded-full flex items-center justify-center">
+                  <User className="h-8 w-8 text-pink-600" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-800">
+                    {profile.display_name || 'Sweet Mama'}
+                  </h2>
+                  <p className="text-gray-500 text-sm">{user?.email}</p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-xl font-semibold text-gray-800">
-                  {profile.display_name || 'Sweet Mama'}
-                </h2>
-                <p className="text-gray-500 text-sm">{user?.email}</p>
-              </div>
+              <Link to="/profile/edit">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-pink-200 text-pink-600 hover:bg-pink-50 rounded-xl"
+                >
+                  <Edit3 className="h-4 w-4 mr-2" />
+                  Edit Profile
+                </Button>
+              </Link>
             </div>
           </div>
 
