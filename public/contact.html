@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - SnuggleNest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <script>
+        window.API_BASE_URL = 'http://localhost:8000/api/v1';
+    </script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
+    <!-- Navigation -->
+    <nav class="bg-white/80 backdrop-blur-sm border-b border-pink-100 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="index.html" class="text-2xl font-bold text-pink-600">🌙 SnuggleNest</a>
+                <div class="flex items-center space-x-6">
+                    <a href="index.html" class="text-gray-700 hover:text-pink-600">Home</a>
+                    <a href="auth.html" class="text-pink-600 hover:text-pink-700">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contact Form -->
+    <section class="py-16 px-4">
+        <div class="max-w-2xl mx-auto">
+            <h1 class="text-4xl font-bold text-pink-600 mb-4 text-center">📧 Let's Connect</h1>
+            <p class="text-gray-600 text-center mb-8">Have a question or just want to say hello? We'd love to hear from you.</p>
+
+            <div class="bg-white rounded-2xl p-8 shadow-lg">
+                <div id="error-message" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4" style="display: none;"></div>
+                <div id="success-message" class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-4" style="display: none;"></div>
+
+                <form id="contact-form" class="space-y-6">
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="first-name" class="block text-sm font-medium text-gray-700 mb-2">First Name *</label>
+                            <input type="text" id="first-name" required
+                                class="w-full px-4 py-3 border border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400">
+                        </div>
+                        <div>
+                            <label for="last-name" class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                            <input type="text" id="last-name"
+                                class="w-full px-4 py-3 border border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
+                        <input type="email" id="email" required
+                            class="w-full px-4 py-3 border border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400">
+                    </div>
+
+                    <div>
+                        <label for="topic" class="block text-sm font-medium text-gray-700 mb-2">Topic *</label>
+                        <select id="topic" required
+                            class="w-full px-4 py-3 border border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400">
+                            <option>General Question</option>
+                            <option>Resource Request</option>
+                            <option>Community Support</option>
+                            <option>Partnership Inquiry</option>
+                            <option>Technical Issue</option>
+                            <option>Share My Story</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-gray-700 mb-2">Your Message *</label>
+                        <textarea id="message" rows="6" required
+                            class="w-full px-4 py-3 border border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none"></textarea>
+                    </div>
+
+                    <div class="flex items-center">
+                        <input type="checkbox" id="newsletter" class="mr-2">
+                        <label for="newsletter" class="text-sm text-gray-600">Subscribe to newsletter</label>
+                    </div>
+
+                    <button type="submit" id="submit-btn"
+                        class="w-full bg-pink-500 text-white py-3 rounded-xl hover:bg-pink-600 transition font-medium">
+                        Send Message 💕
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/api-client.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/loading.js"></script>
+    <script src="js/contact.js"></script>
+</body>
+</html>
+
