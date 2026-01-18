@@ -10,6 +10,13 @@ import { Separator } from '@/components/ui/separator';
 import { getProfile, updateProfile } from '@/lib/api/profile';
 import { useToast } from '@/hooks/use-toast';
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import TwoFactorSetup from '@/components/TwoFactorSetup';
+import {
   Baby,
   Heart,
   Settings as SettingsIcon,
@@ -25,6 +32,10 @@ import {
   Sparkles,
   Star,
   Edit3,
+  Smartphone,
+  ShieldCheck,
+  ShieldOff,
+  Loader2,
 } from 'lucide-react';
 
 const Settings = () => {
@@ -43,6 +54,10 @@ const Settings = () => {
   });
   const [loading, setLoading] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [mfaEnabled, setMfaEnabled] = useState(false);
+  const [mfaLoading, setMfaLoading] = useState(true);
+  const [showMfaSetup, setShowMfaSetup] = useState(false);
+  const [disablingMfa, setDisablingMfa] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -72,6 +87,74 @@ const Settings = () => {
       fetchProfile();
     }
   }, [user]);
+
+  // Check MFA status
+  useEffect(() => {
+    const checkMfaStatus = async () => {
+      if (!user) {
+        setMfaLoading(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase.auth.mfa.listFactors();
+        if (error) {
+          console.error('Error checking MFA status:', error);
+          setMfaLoading(false);
+          return;
+        }
+
+        // Check if there's a verified TOTP factor
+        const hasVerifiedFactor = data.totp.some(f => f.status === 'verified');
+        setMfaEnabled(hasVerifiedFactor);
+      } catch (err) {
+        console.error('MFA check failed:', err);
+      } finally {
+        setMfaLoading(false);
+      }
+    };
+
+    checkMfaStatus();
+  }, [user]);
+
+  const handleDisableMfa = async () => {
+    setDisablingMfa(true);
+
+    try {
+      const { data, error: listError } = await supabase.auth.mfa.listFactors();
+      if (listError) throw listError;
+
+      const verifiedFactor = data.totp.find(f => f.status === 'verified');
+      if (!verifiedFactor) {
+        throw new Error('No verified factor found');
+      }
+
+      const { error: unenrollError } = await supabase.auth.mfa.unenroll({
+        factorId: verifiedFactor.id,
+      });
+
+      if (unenrollError) throw unenrollError;
+
+      setMfaEnabled(false);
+      toast({
+        title: 'Two-Factor Authentication Disabled',
+        description: 'Your account security has been updated.',
+      });
+    } catch (err: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Failed to Disable 2FA',
+        description: err.message || 'Please try again later.',
+      });
+    } finally {
+      setDisablingMfa(false);
+    }
+  };
+
+  const handleMfaSetupComplete = () => {
+    setShowMfaSetup(false);
+    setMfaEnabled(true);
+  };
 
   const handleThemeToggle = async () => {
     const newTheme = isDarkMode ? 'light' : 'dark';
@@ -262,6 +345,53 @@ const Settings = () => {
               <Separator className="bg-pink-100 mb-4" />
               
               <div className="space-y-4">
+                {/* Two-Factor Authentication */}
+                <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-100">
+                  <div className="flex items-center gap-3">
+                    {mfaEnabled ? (
+                      <ShieldCheck className="h-5 w-5 text-green-600" />
+                    ) : (
+                      <Smartphone className="h-5 w-5 text-orange-500" />
+                    )}
+                    <div>
+                      <p className="text-gray-700 font-medium">Two-Factor Authentication</p>
+                      <p className="text-sm text-gray-500">
+                        {mfaEnabled ? 'Your account is protected' : 'Add extra security to your account'}
+                      </p>
+                    </div>
+                  </div>
+                  {mfaLoading ? (
+                    <Loader2 className="h-5 w-5 text-gray-400 animate-spin" />
+                  ) : mfaEnabled ? (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleDisableMfa}
+                      disabled={disablingMfa}
+                      className="border-red-200 text-red-600 hover:bg-red-50"
+                    >
+                      {disablingMfa ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <>
+                          <ShieldOff className="h-4 w-4 mr-1" />
+                          Disable
+                        </>
+                      )}
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowMfaSetup(true)}
+                      className="border-green-200 text-green-600 hover:bg-green-50"
+                    >
+                      <ShieldCheck className="h-4 w-4 mr-1" />
+                      Enable
+                    </Button>
+                  )}
+                </div>
+
                 <div className="flex items-center justify-between p-3 rounded-xl hover:bg-pink-50 transition-colors cursor-pointer">
                   <div className="flex items-center gap-3">
                     <Shield className="h-5 w-5 text-green-500" />
@@ -325,6 +455,22 @@ const Settings = () => {
           </div>
         </div>
       </section>
+
+      {/* MFA Setup Dialog */}
+      <Dialog open={showMfaSetup} onOpenChange={setShowMfaSetup}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-pink-600">
+              <Shield className="h-5 w-5" />
+              Set Up Two-Factor Authentication
+            </DialogTitle>
+          </DialogHeader>
+          <TwoFactorSetup
+            onComplete={handleMfaSetupComplete}
+            onCancel={() => setShowMfaSetup(false)}
+          />
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>
