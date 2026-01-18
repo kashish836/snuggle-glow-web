@@ -7,10 +7,41 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies
 node_modules
 dist
 dist-ssr
 *.local
+
+# Old React Frontend (removed - using vanilla JS in public/)
+src/
+package.json
+package-lock.json
+vite.config.ts
+tsconfig.json
+tsconfig.app.json
+tsconfig.node.json
+tailwind.config.ts
+postcss.config.js
+eslint.config.js
+components.json
+bun.lockb
+
+# Old Supabase (removed - using custom auth)
+supabase/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+*.db
+*.sqlite
 
 # Editor directories and files
 .vscode/*
