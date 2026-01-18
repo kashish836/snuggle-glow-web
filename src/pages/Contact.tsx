@@ -26,6 +26,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { rateLimiter, RATE_LIMIT_CONFIGS } from '@/lib/rate-limiter';
 import { contactFormSchema, emailSchema, type ContactFormData } from '@/lib/validation';
+import { submitContactMessage, subscribeNewsletter } from '@/lib/api/contact';
 import {
   Baby,
   Heart,
@@ -98,29 +99,40 @@ const Contact = () => {
     setLoading(true);
 
     try {
-      // Simulate form submission (in production, this would call an edge function)
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      setSubmitted(true);
-      toast({
-        title: 'Message Sent! 💕',
-        description: 'Thank you for reaching out. We\'ll get back to you soon.',
+      const result = await submitContactMessage({
+        first_name: formData.firstName,
+        last_name: formData.lastName || undefined,
+        email: formData.email,
+        topic: formData.topic,
+        message: formData.message,
+        newsletter: formData.newsletter,
       });
 
-      // Reset form
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        topic: 'General Question',
-        message: '',
-        newsletter: false,
-      });
+      if (result.success) {
+        setSubmitted(true);
+        toast({
+          title: 'Message Sent! 💕',
+          description: 'Thank you for reaching out. We\'ll get back to you soon.',
+        });
+
+        // Reset form
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          topic: 'General Question',
+          message: '',
+          newsletter: false,
+        });
+      } else {
+        throw new Error(result.error?.detail || 'Submission failed');
+      }
     } catch (error) {
+      console.error('Contact form submission error:', error);
       toast({
         variant: 'destructive',
         title: 'Submission Failed',
-        description: 'Unable to send your message. Please try again.',
+        description: error instanceof Error ? error.message : 'Unable to send your message. Please try again.',
       });
     } finally {
       setLoading(false);
@@ -157,19 +169,23 @@ const Contact = () => {
     setNewsletterLoading(true);
 
     try {
-      // Simulate newsletter signup
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      const result = await subscribeNewsletter({ email: newsletterEmail });
 
-      toast({
-        title: 'Subscribed! 🎉',
-        description: 'Welcome to our newsletter family.',
-      });
-      setNewsletterEmail('');
+      if (result.success) {
+        toast({
+          title: 'Subscribed! 🎉',
+          description: 'Welcome to our newsletter family.',
+        });
+        setNewsletterEmail('');
+      } else {
+        throw new Error(result.error?.detail || 'Subscription failed');
+      }
     } catch (error) {
+      console.error('Newsletter subscription error:', error);
       toast({
         variant: 'destructive',
         title: 'Signup Failed',
-        description: 'Unable to subscribe. Please try again.',
+        description: error instanceof Error ? error.message : 'Unable to subscribe. Please try again.',
       });
     } finally {
       setNewsletterLoading(false);

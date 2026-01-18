@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Email - SnuggleNest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <script>
+        window.API_BASE_URL = 'http://localhost:8000/api/v1';
+    </script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
+    <nav class="bg-white/80 backdrop-blur-sm border-b border-pink-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="index.html" class="text-2xl font-bold text-pink-600">🌙 SnuggleNest</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="py-20 px-4">
+        <div class="max-w-md mx-auto">
+            <div class="bg-white rounded-2xl p-8 shadow-lg text-center">
+                <div class="text-5xl mb-4">✉️</div>
+                <h1 class="text-3xl font-bold text-pink-600 mb-4">Verifying Email...</h1>
+                <div id="status-message" class="text-gray-600">
+                    Please wait while we verify your email address.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/api-client.js"></script>
+    <script src="js/auth-enhanced.js"></script>
+    <script>
+        // Get token from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+
+        const statusMessage = document.getElementById('status-message');
+
+        if (!token) {
+            statusMessage.innerHTML = `
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                    Invalid verification link. Please check your email for the correct link.
+                </div>
+            `;
+        } else {
+            // Verify email
+            verifyEmail(token).then(result => {
+                if (result.success) {
+                    statusMessage.innerHTML = `
+                        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-4">
+                            ✅ Email verified successfully! You can now use all features.
+                        </div>
+                        <a href="index.html" class="inline-block bg-pink-500 text-white px-6 py-3 rounded-xl hover:bg-pink-600 transition">
+                            Go to Homepage
+                        </a>
+                    `;
+                } else {
+                    statusMessage.innerHTML = `
+                        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+                            ${result.error || 'Verification failed. The link may have expired.'}
+                        </div>
+                        <a href="settings.html" class="inline-block bg-pink-500 text-white px-6 py-3 rounded-xl hover:bg-pink-600 transition">
+                            Request New Verification Email
+                        </a>
+                    `;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+

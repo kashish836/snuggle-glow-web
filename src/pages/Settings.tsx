@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { supabase } from '@/integrations/supabase/client';
+import { getProfile, updateProfile } from '@/lib/api/profile';
 import { useToast } from '@/hooks/use-toast';
 import {
   Baby,
@@ -54,19 +54,16 @@ const Settings = () => {
     const fetchProfile = async () => {
       if (!user) return;
       
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('display_name, theme_preference, notifications_enabled')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (data) {
+      try {
+        const data = await getProfile();
         setProfile({
           display_name: data.display_name,
           theme_preference: data.theme_preference || 'light',
           notifications_enabled: data.notifications_enabled ?? true,
         });
         setIsDarkMode(data.theme_preference === 'dark');
+      } catch (error) {
+        console.error('Failed to fetch profile:', error);
       }
       setLoading(false);
     };
@@ -81,35 +78,49 @@ const Settings = () => {
     setIsDarkMode(!isDarkMode);
 
     if (user) {
-      await supabase
-        .from('profiles')
-        .update({ theme_preference: newTheme })
-        .eq('user_id', user.id);
+      try {
+        await updateProfile({ theme_preference: newTheme });
+        setProfile({ ...profile, theme_preference: newTheme });
+        toast({
+          title: 'Theme Updated',
+          description: `Switched to ${newTheme} mode`,
+        });
+      } catch (error) {
+        console.error('Failed to update theme:', error);
+        toast({
+          variant: 'destructive',
+          title: 'Update Failed',
+          description: 'Failed to update theme preference.',
+        });
+        setIsDarkMode(!isDarkMode); // Revert on error
+      }
     }
-
-    toast({
-      title: 'Theme Updated',
-      description: `Switched to ${newTheme} mode`,
-    });
   };
 
   const handleNotificationsToggle = async () => {
     const newValue = !profile.notifications_enabled;
-    setProfile({ ...profile, notifications_enabled: newValue });
+    const previousValue = profile.notifications_enabled;
 
     if (user) {
-      await supabase
-        .from('profiles')
-        .update({ notifications_enabled: newValue })
-        .eq('user_id', user.id);
+      try {
+        await updateProfile({ notifications_enabled: newValue });
+        setProfile({ ...profile, notifications_enabled: newValue });
+        toast({
+          title: newValue ? 'Notifications Enabled' : 'Notifications Disabled',
+          description: newValue
+            ? "You'll receive updates and tips!"
+            : 'You can enable them anytime.',
+        });
+      } catch (error) {
+        console.error('Failed to update notifications:', error);
+        setProfile({ ...profile, notifications_enabled: previousValue }); // Revert on error
+        toast({
+          variant: 'destructive',
+          title: 'Update Failed',
+          description: 'Failed to update notification preferences.',
+        });
+      }
     }
-
-    toast({
-      title: newValue ? 'Notifications Enabled' : 'Notifications Disabled',
-      description: newValue
-        ? "You'll receive updates and tips!"
-        : 'You can enable them anytime.',
-    });
   };
 
   const handleSignOut = async () => {

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - SnuggleNest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <script>
+        window.API_BASE_URL = 'http://localhost:8000/api/v1';
+    </script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
+    <!-- Navigation -->
+    <nav class="bg-white/80 backdrop-blur-sm border-b border-pink-100 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="index.html" class="text-2xl font-bold text-pink-600">🌙 SnuggleNest</a>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-gray-700 hover:text-pink-600">Home</a>
+                    <button id="logout-btn" class="text-pink-600 hover:text-pink-700">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Settings Content -->
+    <section class="py-16 px-4">
+        <div class="max-w-2xl mx-auto">
+            <h1 class="text-3xl font-bold text-pink-600 mb-8 text-center">⚙️ Settings</h1>
+
+            <!-- Profile Section -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Profile</h2>
+                <div id="profile-info" class="text-gray-600">
+                    Loading...
+                </div>
+                <div id="verification-status" class="mt-4"></div>
+                <a href="profile-edit.html" class="text-pink-600 hover:text-pink-700 mt-4 inline-block">Edit Profile →</a>
+            </div>
+
+            <!-- Theme Settings -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">🎨 Theme Settings</h2>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <label class="text-gray-700 font-medium">Dark Mode</label>
+                        <p class="text-sm text-gray-500">Easier on tired mama eyes at night</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="dark-mode-toggle" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-500"></div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Notifications -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">🔔 Notifications</h2>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <label class="text-gray-700 font-medium">Email Updates</label>
+                        <p class="text-sm text-gray-500">Receive baby tips and community updates</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="notifications-toggle" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-500"></div>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/api-client.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/auth-enhanced.js"></script>
+    <script src="js/loading.js"></script>
+    <script src="js/settings.js"></script>
+</body>
+</html>
+

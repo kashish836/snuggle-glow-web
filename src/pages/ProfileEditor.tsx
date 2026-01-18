@@ -16,10 +16,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { profileUpdateSchema, type ProfileUpdateData } from '@/lib/validation';
 import { rateLimiter, RATE_LIMIT_CONFIGS } from '@/lib/rate-limiter';
+import { getProfile, updateProfile } from '@/lib/api/profile';
 import {
   Baby,
   Heart,
@@ -59,18 +59,15 @@ const ProfileEditor = () => {
     const fetchProfile = async () => {
       if (!user) return;
 
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('display_name, bio, avatar_url')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (data) {
+      try {
+        const data = await getProfile();
         setProfile({
           display_name: data.display_name || '',
           bio: data.bio || '',
           avatar_url: data.avatar_url || '',
         });
+      } catch (error) {
+        console.error('Failed to fetch profile:', error);
       }
       setLoading(false);
     };
@@ -119,14 +116,13 @@ const ProfileEditor = () => {
     setSaving(true);
 
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update(validationResult.data)
-        .eq('user_id', user!.id);
-
-      if (error) {
-        throw error;
-      }
+      const updatedProfile = await updateProfile(validationResult.data);
+      
+      setProfile({
+        display_name: updatedProfile.display_name || '',
+        bio: updatedProfile.bio || '',
+        avatar_url: updatedProfile.avatar_url || '',
+      });
 
       toast({
         title: 'Profile Updated! 💕',
@@ -135,6 +131,7 @@ const ProfileEditor = () => {
 
       navigate('/settings');
     } catch (error) {
+      console.error('Failed to update profile:', error);
       toast({
         variant: 'destructive',
         title: 'Update Failed',
