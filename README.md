@@ -2,7 +2,7 @@ make it for this # 🌟 Snuggle Glow
 
 A cozy, calming full-stack web experience designed to bring **comfort, positive energy, and relaxation** — built with a modern frontend and a **Python-powered backend**.
 
-🌐 Live Demo: https://lovable.dev/projects/ae3488a2-6067-4297-af1e-6c8b659cae24
+🌐 Live Demo: https://snuggle-glow-web.vercel.app/
 
 ---
 
